@@ -1,6 +1,8 @@
 PROMPROM
 ========
 
+[![Build Status](https://travis-ci.org/davinche/promprom.svg?branch=master)](https://travis-ci.org/davinche/promprom)
+
 A lightweight promise polyfill.
 
 
