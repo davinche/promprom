@@ -91,6 +91,9 @@ class Promise {
     if (this._state === PromiseState.FULFILLED) {
       if (onFulfilled) {
         const retVal = onFulfilled(this._value);
+        if (isPromise(retVal)) {
+          return retVal.then(resolve, resolve);
+        }
         return resolve(retVal);
       }
       return resolve(this._value);
@@ -98,6 +101,9 @@ class Promise {
 
     if (onRejected) {
       const retVal = onRejected(this._value);
+      if (isPromise(retVal)) {
+        return retVal.then(resolve, resolve);
+      }
       return resolve(retVal);
     }
     return reject(this._value);

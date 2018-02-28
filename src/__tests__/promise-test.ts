@@ -2,6 +2,16 @@ import Promise, {polyfill} from '../promise-polyfill';
 
 jest.useFakeTimers();
 
+describe('polyfill', () => {
+  let origPromise = window.Promise;
+  afterEach(() => window.Promise = origPromise);
+  it ('sets the global object with the our polyfilled Promise', () => {
+    expect(window.Promise).not.toBe(Promise);
+    polyfill(window);
+    expect(window.Promise).toBe(Promise);
+  });
+});
+
 describe('Promise', () => {
   describe('length', () => {
     it ('should be 1', () => {
@@ -30,7 +40,6 @@ describe('Promise', () => {
     });
 
     it ('should allow multiple onResolves to be called', () => {
-
       const onResolve1 = jest.fn();
       const onResolve2 = jest.fn();
       const promise = new Promise((resolve: Function) => {
@@ -43,6 +52,19 @@ describe('Promise', () => {
       expect(onResolve2).not.toHaveBeenCalled();
       jest.runOnlyPendingTimers();
       expect(onResolve1).toHaveBeenCalledWith('foo');
+      expect(onResolve2).toHaveBeenCalledWith('foo');
+    });
+
+    it('resolves with the initial value even if resolve is called multiple times with different values', () => {
+      const onResolve1 = jest.fn();
+      const onResolve2 = jest.fn();
+      let _resolve;
+      const p = new Promise((resolve) => _resolve = resolve);
+      p.then(onResolve1);
+      _resolve('foo');
+      expect(onResolve1).toHaveBeenCalledWith('foo');
+      _resolve('bar');
+      p.then(onResolve2);
       expect(onResolve2).toHaveBeenCalledWith('foo');
     });
   });
@@ -83,6 +105,20 @@ describe('Promise', () => {
       expect(onReject2).not.toHaveBeenCalled();
       jest.runOnlyPendingTimers();
       expect(onReject1).toHaveBeenCalledWith('foo');
+      expect(onReject2).toHaveBeenCalledWith('foo');
+    });
+
+    it('rejects with the initial value even if reject is called multiple times with different values', () => {
+      const onReject1 = jest.fn();
+      const onReject2 = jest.fn();
+      let _reject;
+      const p = new Promise((_, reject) => _reject = reject);
+      p.catch(onReject1);
+      _reject('foo');
+      expect(onReject1).toHaveBeenCalledWith('foo');
+      _reject('bar');
+      p.catch(onReject2);
+      _reject('baz');
       expect(onReject2).toHaveBeenCalledWith('foo');
     });
   });
@@ -226,6 +262,19 @@ describe('Promise', () => {
       Promise.resolve('foo').then(onResolve);
       expect(onResolve).toHaveBeenCalledWith('foo');
     });
+
+    it ('calls onResolve with the value after resolving a resolved promise', () => {
+      const onResolve = jest.fn();
+      const asyncResolve = () => {
+        return new Promise((resolve) => {
+          setTimeout(() => resolve('success'), 100);
+        });
+      };
+      Promise.resolve('foo').then(asyncResolve).then(onResolve);
+      expect(onResolve).not.toHaveBeenCalled();
+      jest.runOnlyPendingTimers();
+      expect(onResolve).toHaveBeenCalledWith('success');
+    });
   });
 
   describe('Promise.reject', () => {
@@ -240,6 +289,22 @@ describe('Promise', () => {
       Promise.reject('bar').then(onResolve, onReject);
       expect(onResolve).not.toHaveBeenCalled();
       expect(onReject).toHaveBeenCalledWith('bar');
+    });
+
+    it ('calls onResolve with the value after resolving a rejected promise', () => {
+      const onResolve = jest.fn();
+      const onReject = jest.fn();
+      const asyncReject = () => {
+        return new Promise((_, reject) => {
+          setTimeout(() => reject('failure'), 100);
+        });
+      };
+      Promise.reject('bar').then(() =>, asyncReject).then(onResolve, onReject);
+      expect(onResolve).not.toHaveBeenCalled();
+      expect(onReject).not.toHaveBeenCalled();
+      jest.runOnlyPendingTimers();
+      expect(onResolve).toHaveBeenCalledWith('failure');
+      expect(onReject).not.toHaveBeenCalled();
     });
   });
 
