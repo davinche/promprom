@@ -1,0 +1,38 @@
+{
+  "name": "promprom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/promise-polyfill.js",
+  "scripts": {
+    "start": "rimraf ./dist && tsc",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "watch": "jest --watchAll"
+  },
+  "keywords": [],
+  "author": "Vincent Cheung",
+  "devDependencies": {
+    "jest": "^22.4.2",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^22.4.0",
+    "typescript": "^2.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davinche/promprom.git"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
