@@ -121,10 +121,18 @@ describe('Promise', () => {
       _reject('baz');
       expect(onReject2).toHaveBeenCalledWith('foo');
     });
+
+    it('calls the onReject handler if an error is thrown', () => {
+      const onReject = jest.fn();
+      const p = new Promise((_, reject) => {
+        throw 'catch this!';
+      });
+      p.catch(onReject);
+      expect(onReject).toHaveBeenCalledWith('catch this!');
+    });
   });
 
   describe('then', () => {
-
     it ('should return a promise when called', () => {
       const noop = function() {};
       const p = new Promise((resolve) => resolve());
@@ -398,4 +406,5 @@ describe('Promise', () => {
       expect(onReject).toHaveBeenCalledWith('r2');
     });
   });
+
 });

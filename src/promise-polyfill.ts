@@ -30,7 +30,11 @@ class Promise {
     this._onFulfilled = [];
     this._onRejected = [];
     this._onFinally = [];
-    executor(this._resolve, this._reject);
+    try {
+      executor(this._resolve, this._reject);
+    } catch(e) {
+      this._reject(e);
+    }
   }
 
   private _resolve(val: any) {
