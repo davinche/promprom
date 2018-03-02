@@ -15,6 +15,6 @@ import Promise from 'promprom';
 ## Polyfill ##
 
 ```js
-import { polyfill } from 'prompromp';
+import { polyfill } from 'promprom';
 polyfill();
 ```
