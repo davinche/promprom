@@ -1,7 +1,9 @@
 src/
 coverage/
 node_modules/
-tags
-README.md
-.tsconfig
-Makefile
+./tags
+./README.md
+./.tsconfig
+./Makefile
+./tsconfig.json
+./.travis.yml
